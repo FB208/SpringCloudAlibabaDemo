@@ -3,11 +3,17 @@ package com.haiot.springcloud.controller;
 import com.haiot.springcloud.entities.CommonResult;
 import com.haiot.springcloud.entities.Payment;
 import com.haiot.springcloud.service.PaymentService;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.netflix.eureka.EurekaServiceInstance;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -17,6 +23,9 @@ public class PaymentController {
 
     @Value("${server.port}")
     private String serverPort;
+
+    @Resource
+    private DiscoveryClient discoveryClient;
 
     @PostMapping(value="/payment/create")
     public CommonResult create(@RequestBody Payment payment) {
@@ -41,4 +50,21 @@ public class PaymentController {
             return new CommonResult(444, "查询数据库失败,serverPort:"+serverPort, null);
         }
     }
+
+    @GetMapping(value="/payment/discovery")
+    public Object discovery()
+    {
+        List<String> services = discoveryClient.getServices();
+        for (String element : services) {
+            log.info("******element:"+element);
+        }
+
+        List<ServiceInstance> instances=discoveryClient.getInstances("CLOUD-PAYMENT-SERVICE");
+        for (ServiceInstance instance : instances) {
+            log.info(instance.getServiceId()+"\t"+instance.getHost()+"\t"+instance.getPort()+"\t"+instance.getUri());
+        }
+        return this.discoveryClient;
+    }
+
+
 }
