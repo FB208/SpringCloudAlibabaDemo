@@ -40,4 +40,10 @@ public class PaymentController {
             return new CommonResult(444, "查询数据库失败,serverPort:"+serverPort, null);
         }
     }
+
+    @GetMapping(value="/payment/lb")
+    public String getPaymentLB()
+    {
+        return serverPort;
+    }
 }
