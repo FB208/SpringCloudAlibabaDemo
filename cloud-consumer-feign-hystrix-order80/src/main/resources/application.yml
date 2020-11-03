@@ -6,3 +6,18 @@ eureka:
     register-with-eureka: false
     service-url:
       defaultZone: http://localhost:7001/eureka,http://localhost:7002/eureka
+
+ribbon:
+  #请求超时时间 毫秒
+  ReadTimeout: 5000
+  #建立连接超时时间 毫秒
+  ConnectTimeout: 5000
+
+logging:
+  level:
+    #feign日志以什么级别，监控哪个接口
+    com.zd.springcloud.service.PaymentFeignService: debug
+
+feign:
+  hystrix:
+    enabled: true
